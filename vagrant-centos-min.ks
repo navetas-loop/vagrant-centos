@@ -8,7 +8,7 @@ rootpw vagrant
 firewall --disabled
 authconfig --enableshadow --passalgo=sha512
 selinux --disabled
-timezone --utc America/Chicago
+timezone --utc UTC
 zerombr
 clearpart --all
 part /boot --fstype=ext4 --size=512
@@ -38,8 +38,6 @@ EOF
 /bin/chmod 0440 /etc/sudoers.d/wheel
 /bin/mkdir /home/vagrant/.ssh
 /bin/chmod 700 /home/vagrant/.ssh
-/usr/bin/curl -L -o /home/vagrant/.ssh/id_rsa https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant
-/usr/bin/curl -L -o /home/vagrant/.ssh/authorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
 /bin/chown -R vagrant:vagrant /home/vagrant/.ssh
 /bin/chmod 0400 /home/vagrant/.ssh/*
 /bin/echo 'UseDNS no' >> /etc/ssh/sshd_config

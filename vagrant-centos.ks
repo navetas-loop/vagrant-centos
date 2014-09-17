@@ -1,14 +1,14 @@
 install
 text
 cdrom
-lang en_US.UTF-8
-keyboard us
+lang en_GB.UTF-8
+keyboard uk
 network --onboot yes --device eth0 --bootproto dhcp --noipv6 --hostname vagrant-centos-6.vagrantup.com
 rootpw vagrant
 firewall --disabled
 authconfig --enableshadow --passalgo=sha512
 selinux --disabled
-timezone --utc America/Chicago
+timezone --utc UTC
 zerombr
 clearpart --all
 part /boot --fstype=ext4 --size=512
@@ -29,28 +29,26 @@ cp /etc/resolv.conf /mnt/sysimage/etc/resolv.conf
 %end
 
 %post
-/usr/bin/yum -y install sudo gcc "kernel-devel-$(uname -r)" make perl rubygems ruby-devel
 /bin/cat << EOF > /etc/sudoers.d/wheel
 Defaults:%wheel env_keep += "SSH_AUTH_SOCK"
 Defaults:%wheel !requiretty
 %wheel ALL=(ALL) NOPASSWD: ALL
 EOF
 /bin/chmod 0440 /etc/sudoers.d/wheel
+/bin/echo 'Defaults:root !requiretty' >/etc/sudoers.d/rootextras
+/bin/chmod 0440 /etc/sudoers.d/rootextras
 /bin/mkdir /mnt/vbox
 /bin/mount -t iso9660 /dev/sr1 /mnt/vbox
 /mnt/vbox/VBoxLinuxAdditions.run
 /bin/umount /mnt/vbox
 /bin/rmdir /mnt/vbox
-/usr/bin/gem install --no-ri --no-rdoc puppet
 /usr/sbin/groupadd -r puppet
-/usr/bin/gem install --no-ri --no-rdoc chef
 /bin/mkdir /home/vagrant/.ssh
 /bin/chmod 700 /home/vagrant/.ssh
-/usr/bin/curl -L -o /home/vagrant/.ssh/id_rsa https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant
-/usr/bin/curl -L -o /home/vagrant/.ssh/authorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
 /bin/chown -R vagrant:vagrant /home/vagrant/.ssh
 /bin/chmod 0400 /home/vagrant/.ssh/*
 /bin/echo 'UseDNS no' >> /etc/ssh/sshd_config
+/bin/echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 /bin/echo '127.0.0.1   vagrant-centos-6.vagrantup.com' >> /etc/hosts
 /usr/bin/yum -y clean all
 /sbin/swapoff -a
